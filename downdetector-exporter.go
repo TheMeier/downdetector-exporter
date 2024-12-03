@@ -123,9 +123,6 @@ func getCredentials(credentialsFile string) {
 		err = yaml.NewDecoder(osFile).Decode(&credentials)
 		if err != nil || credentials.Password == "" || credentials.UserName == "" {
 			errorText := "Username/Password not set"
-			if err != nil {
-				//errorText = err.Error()
-			}
 			level.Error(lg).Log("msg", fmt.Sprintf("Couldn't parse credentials file: %s", errorText))
 			level.Error(lg).Log("msg", fmt.Sprintf("YAML file needs to contain userName and password fields"))
 			os.Exit(2)
@@ -372,12 +369,12 @@ func initToken() {
 	// create the token refresh request
 	url := baseURL + "/tokens?grant_type=client_credentials"
 	req, err := http.NewRequest("POST", url, nil)
-	req.SetBasicAuth(credentials.UserName, credentials.Password)
 	if err != nil {
 		// return if we weren't successful - we have tokenGraceSeconds to retry
-		level.Warn(lg).Log("msg", fmt.Sprintf("Couldn't apply Basic Auth: %s", err.Error()))
+		level.Warn(lg).Log("msg", fmt.Sprintf("Could not create http request: %s", err.Error()))
 		return
 	}
+	req.SetBasicAuth(credentials.UserName, credentials.Password)
 	// send the token refresh request
 	res, err := httpClient.Do(req)
 	if err != nil {
@@ -427,11 +424,11 @@ func getMetrics(companyIDs string, searchString string) {
 	// curl --request GET -H "Authorization: Bearer $TOKEN" --url 'https://downdetectorapi.com/v2/companies/search?name=mail.com&fields=url%2Cbaseline%2Csite_id%2Cstatus%2Ccountry_iso%2Cname%2Cslug' | jq .
 
 	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Bearer "+token.Access)
 	if err != nil {
-		level.Warn(lg).Log("msg", fmt.Sprintf("Couldn't apply authorization header: %s", err.Error()))
+		level.Warn(lg).Log("msg", fmt.Sprintf("Could not create http request: %s", err.Error()))
 		return
 	}
+	req.Header.Add("Authorization", "Bearer "+token.Access)
 	// send the metrics request
 	res, err := httpClient.Do(req)
 	if err != nil {
