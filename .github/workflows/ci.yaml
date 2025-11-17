@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
 
 jobs:
@@ -16,8 +14,8 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}        
-      - name: 'Build Inventory Image'
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: 'Build and Push Image'
         run: |
-          docker build . --tag ghcr.io/$GITHUB_REPOSITORY_OWNER/downdetector-exporter:latest
-          docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/downdetector-exporter:latest
+          docker build . --tag ghcr.io/${{ github.event.pull_request.user.login }}/downdetector-exporter:latest
+          docker push ghcr.io/${{ github.event.pull_request.user.login }}/downdetector-exporter:latest
