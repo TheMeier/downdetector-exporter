@@ -18,7 +18,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
+          password: ${{github.token}}
       - name: 'Build and Push Image'
         run: |
           IMAGE_NAMESPACE=$(echo "$GITHUB_ACTOR" | tr '[:upper:]' '[:lower:]')
