@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - master
 
 permissions:
   contents: read
@@ -14,6 +12,7 @@ permissions:
 jobs:
   docker-build-push:
     runs-on: ubuntu-latest
+    if: github.ref_type == 'tag' && github.event.base_ref == 'refs/heads/master'
     steps:
       - name: 'Pull Code'
         uses: actions/checkout@main
@@ -27,7 +26,7 @@ jobs:
 
       - name: 'Build and Push Image'
         run: |
-          IMAGE_NAMESPACE=$(echo "$GITHUB_ACTOR" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAMESPACE=$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
           docker build \
             --build-arg VERSION=${{ github.ref_name }} \
             --tag ghcr.io/${IMAGE_NAMESPACE}/downdetector-exporter:${{ github.ref_name }} \
