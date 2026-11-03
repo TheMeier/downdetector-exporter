@@ -118,7 +118,7 @@ Example of running in docker compose using some the above variables
 services:
   downdetector-exporter:
     container_name: downdetector-exporter
-    image: ghcr.io/kic68/downdetector-exporter
+    image: ghcr.io/themeier/downdetector-exporter
     restart: always
     environment:
       - COMPANY_IDS=23456,12345,34567
@@ -148,7 +148,7 @@ spec:
               value: client-id
             - name: DD_PASSWORD
               value: secret-token
-          image: ghcr.io/kic68/downdetector-exporter
+          image: ghcr.io/themeier/downdetector-exporter
           name: downdetector-exporter
           resources: {}
       restartPolicy: Always
