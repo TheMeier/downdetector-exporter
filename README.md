@@ -4,32 +4,9 @@
 
 ### Help message
 
-```
-./downdetector-exporter --help
-Incorrect Usage. flag: help requested
-
-
-  NAME:
-     downdetector-exporter - report metrics of downdetector api
-
-  USAGE:
-     downdetector-exporter [global options]
-
-  AUTHOR:
-     Torben Frey <torben@torben.dev>
-
-  GLOBAL OPTIONS:
-     --company_ids value, -i value       comma separated list of company ids to monitor [$COMPANY_IDS]
-     --credentials_file value, -c value  file containing credentials for downdetector. Credentials file is in YAML format and contains two fields, username and password. Alternatively give username and password, they win over credentials file. [$CREDENTIALS_FILE]
-     --username value, -u value          username, wins over credentials file [$DD_USERNAME]
-     --password value, -p value          password, wins over credentials file [$DD_PASSWORD]
-     --listen_address value, -l value    [optional] address to listen on, either :port or address:port (default: ":9313") [$LISTEN_ADDRESS]
-     --metrics_path value, -m value      [optional] URL path where metrics are exposed (default: "/metrics") [$METRICS_PATH]
-     --log_level value, -v value         [optional] log level, choose from DEBUG, INFO, WARN, ERROR (default: "ERROR") [$LOG_LEVEL]
-     --search_string value, -s value     [optional] search for companies containing this text and return their IDs
-
-  level=error msg="flag: help requested"
-```
+Run `./downdetector-exporter --help` to display the available options. Long options
+can use either one or two leading hyphens, and the short aliases are shown in the
+help output. Environment variables provide defaults for the corresponding flags.
 
 #### Prerequisites
 
@@ -39,9 +16,11 @@ Either provide a credentials file using the --credentials_file parameter. The fi
 ---
 username: adjshkajsdhakjsd
 password: djhfksjdfhksjfhksjdhf
-
+company_ids: "123,456"
 ```
-Alternatively you can provide username and password parameters, they will win over the credentials file.
+Company IDs may also be provided with the `--company_ids` flag or `COMPANY_IDS`
+environment variable; those values override the YAML value. Username and password
+flags likewise take precedence over the values in the credentials file.
 
 ### How to execute
 
@@ -75,9 +54,9 @@ ID: 39317 - Name: Microsoft Azure, Slug: windows-azure, Country: SE
 ID: 39318 - Name: Microsoft Azure, Slug: windows-azure, Country: FI
 ```
 
-### Systemd notifications
+### Running with systemd
 
-The exporter will send readyness and alive messages to systemd. Systemd will restart the exporter once these alive messages stop if you provide a unit file such as
+Systemd can restart the exporter after a failure with a unit file such as:
 
 ```
 [Unit]
@@ -86,10 +65,9 @@ After=network.target
 AssertPathExists=/home/username/go/bin
 
 [Service]
-Type=notify
+Type=simple
 ExecStart=/home/username/go/bin/downdetector-exporter -c downdetector-credentials.yaml -i 23456,12345,34567
 User=username
-WatchdogSec=180s
 Restart=on-failure
 
 [Install]
